@@ -1,47 +1,49 @@
-library(lme4)
-# If the file is in your current working directory
-dataset <- read.csv("filename.csv")
-
-# Using a specific absolute file path
-dataset <- read.csv("C:/Users/YourName/Documents/filename.csv")
-
-#Creating Simple Linear Regression Models for student-level predictors
-#We use the general function lm() and set our different variables
-#The first variable is our outcome variable and the rest will be our predictor variables
-
-gen_linear_model <- lm(Scaled_Score ~ Ethnicity_Simple + Gender + 
-                      as.factor(GRADE_LEVEL) + SPED_SERVICES + 
-                      ESL_RECEIVE, data = dataset)
+# ==============================================================================
+# Generalized Simple Models ----
+# ==============================================================================
 
 
-#Once we have the variables in our function, we use the   summary() function to summarize  the coefficients of each variable
-summary(gen_linear_model)
-#This step can be replicated for each grade level and subject type
+# ==============================================================================
+# NOTE: ----
+#' This code provides the basis for creating simple linear regression models.
+#' This can be used for the first step of your analysis to identify patterns
+#' and trends.
+#' You can create as many regression models as your analysis needs.
+# ==============================================================================
 
 
-#####################Calculating Mean Residuals
-#We would calculate the general mean residuals of each model to determine school performance if the school performed better or worse
-# Calculate school-level mean residuals
-# Positive values = performing better than expected
-# Negative values = performing worse than expected
-
-school_mean_residuals <- aggregate(
-  resid(student_model),
-  by = list(School = dataset$SCHOOL_NAME),
-  FUN = mean
-)
-
-colnames(school_mean_residuals)[2] <- "Mean_Residual"
+# ==============================================================================
+# Set Directory ----
+# ==============================================================================
+setwd("yourDir")
+dir <- "yourDir"
 
 
-#Weighted Multiple Regression Model with added school-level variables
-general_school_model <- lm(school_mean_residual ~ `Type` + `Filipino Percent` + 
-                    `Chuukese Percent` + `Other FAS, Asian, and Other Percent` 
-                  + `ELL Percent` + `SPED Percent` #These are individual level predictors and we then add our school-level predictors
-                  + `Attendance Rate` + 
-                    `Teacher-Student` + `InstructionalAide-Student` + 
-                    `Expenditure-Student`,
-                  weights =  `Total Students Math`,
-                  data = school_data)
-summary(general_school_model)
+# ==============================================================================
+# Read Files ----
+# ==============================================================================
+merged_file <- read.csv(paste0(dir, "yourMergedFile.csv"))
 
+
+# ==============================================================================
+# Create Simple Linear Regression Models ----
+# ==============================================================================
+## Step 1: Decide what variables you want to use to predict your outcome ----
+gen_linear_model <- lm(predictedVariable ~ predictorVariable1 
+                       + predictorVariable2,
+                       weights = weightedVarible, # Optional
+                       data = merged_file,
+                       )
+
+## Step 2: Save mean residuals ----
+residual_df <- aggregate(resid(gen_linear_model),
+                         
+                         #' Decide how you want to group your residuals.
+                         #' Ex: CDP, City, School
+                         by = list(CDP = merged_file$CDP),
+                         
+                         FUN = mean)
+
+## Step 3: Ensure that the dataframe has the correct column names ----
+names(residual_df)[1] <- "CDP"  # Grouping variable
+names(residual_df)[2] <- "Residual"
