@@ -13,6 +13,13 @@
 
 
 # ==============================================================================
+# Load Packages ----
+# ==============================================================================
+library(dplyr)
+library(readr)
+
+
+# ==============================================================================
 # Set Directory ----
 # ==============================================================================
 setwd("yourDir")
@@ -26,6 +33,18 @@ score_file <- read.csv(paste0(dir, "yourScoreFile.csv"))
 enrollment_file <- read.csv(paste0(dir, "yourEnrollmentFile.csv"))
 school_file <- read.csv(paste0(dir, "yourSchoolFile.csv"))
 census_file <- read.csv(paste0(dir, "yourCensusFile.csv"))
+
+# ==============================================================================
+# Convert Census Variables to z-scores ----
+# ==============================================================================
+## Step 1: Choose the variables from census_file that you want to use for ----
+##         your analysis
+cols_to_scale <- c("variableName1", "variableName3")
+
+## Step 2: Save the z-scores into its own dataset ----
+census_z_file <- census_file %>% 
+  dplyr::select(CDP, all_of(cols_to_scale)) %>%
+  mutate(across(all_of(cols_to_scale), scale))
 
 
 # ==============================================================================
@@ -43,7 +62,7 @@ merged_file <- enrollment_file %>% left_join(score_file,
 merged_file <- merged_file %>% left_join(school_file,
                                          by = "yourMergingVariable")
 
-merged_file <- merged_file %>% left_join(census_file,
+merged_file <- merged_file %>% left_join(census_z_file,
                                          by = "yourMergingVariable")
 
 # ==============================================================================
