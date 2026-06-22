@@ -47,3 +47,9 @@ residual_df <- aggregate(resid(gen_linear_model),
 ## Step 3: Ensure that the dataframe has the correct column names ----
 names(residual_df)[1] <- "CDP"  # Grouping variable
 names(residual_df)[2] <- "Residual"
+
+
+# ==============================================================================
+# Save Residual Dataframe ----
+# ==============================================================================
+write_csv(residual_df, "yourResidualDF.csv")
