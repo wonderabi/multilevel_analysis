@@ -1,10 +1,31 @@
+# ==============================================================================
+# Addresses to CDP ----
+# ==============================================================================
+
+
+# ==============================================================================
+# Load Packages ----
+# ==============================================================================
 library(httr)
 library(jsonlite)
 library(dplyr)
 
-# Create Function ----
-#' For this function, we are linking the students' home addresses to the Census
-#' geocoder website.
+
+# ==============================================================================
+# Function ----
+# ==============================================================================
+# Function: Addresses to CDP ----
+#' You can use this code to autonomously link addresses to its CDP using the 
+#' Census geocoder
+#' 
+#' @param address The address you wish to link
+#' 
+#' @returns The corresponding CDP
+#' @export
+#' 
+#' @example 
+#' geocode_cdp("303 University Drive, UOG Station, Mangilao, Guam 96923")
+#' 
 geocode_cdp <- function(address) {
   
   # ALWAYS return character
@@ -55,29 +76,35 @@ geocode_cdp <- function(address) {
 }
 
 
-# Test Set to Ensure Function is working ----
-subset_enrollment <- subset_enrollment[1:5, ]
-subset_enrollment$CDP <- vapply(
-  subset_enrollment$full_address,
+# ==============================================================================
+# Set Directory ----
+# ==============================================================================
+setwd("yourDir")
+dir <- "yourDir"
+
+
+# ==============================================================================
+# Read Files ----
+# ==============================================================================
+enrollment_file <- read.csv(paste0(dir, "yourEnrollmentFile.csv"))
+
+
+# ==============================================================================
+# Apply Function to CDP ----
+# ==============================================================================
+enrollment_file$CDP <- vapply(
+  enrollment_file$address,
   geocode_cdp,
   character(1)
 )
 
 
-# Apply function to enrollment dataset ----
-enrollment$CDP_Geo <- vapply(
-  enrollment$full_address,
-  geocode_cdp,
-  character(1)
-)
-
-
-# Force CDPs if there's only one CDP per village
-enrollment <- enrollment %>%
-  mutate(CDP = ifelse(is.na(CDP_Geo) & Village %in% c("HAGATNA", "CHALAN PAGO", 
-                                                  "ORDOT", "MONGMONG", "TOTO",
-                                                  "MAITE", "AGAT", "MERIZO",
-                                                  "UMATAC"), 
-                      paste0(str_to_title(Village), " CDP"), CDP_Geo))
+# ==============================================================================
+# Force CDPs if Only One Exists in the Area ----
+# ==============================================================================
+enrollment_file <- enrollment_file %>%
+  mutate(CDP = ifelse(is.na(CDP) & yourCityVariable %in% 
+                        c("CDP1","CDP2"), 
+                      paste0(str_to_title(yourCityVariable), " CDP"), CDP))
 
 
