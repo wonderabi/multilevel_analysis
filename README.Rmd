@@ -1,0 +1,24 @@
+# Multilevel Analysis
+
+## Authors and Contact
+
+- Maria Seanna Minas (mseaminas.edu\@gmail.com)
+
+- Abigail Pobre (aspobre\@gdoe.net)
+
+- John Christian "JC" Sual (jcsual\@gmail.com)
+
+- Grazyna Badowski
+
+- Zenaida Natividad
+
+## Recommended Order of Codes
+
+1.  Addresses to CDP
+2.  Merging Files
+3.  Generalized Simple Regression Models
+4.  LASSO Regression Analysis and Mixed Regression Models
+
+## Notes
+
+In the codes, anything written in camel case (thisIsAnExampleOfCamelCase) should be replaced with your intended outcomes.
